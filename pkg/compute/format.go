@@ -2,6 +2,7 @@ package compute
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -42,7 +43,6 @@ func formatError(value float64, n int) (string, int) {
 	if lastDigitIndex >= len(str) {
 		exitTooLarge()
 	}
-	lastDigit := int(str[lastDigitIndex]) - asciiZero
 
 	digitIndexToRound := lastDigitIndex + 1
 	if digitIndexToRound >= len(str) {
@@ -52,18 +52,29 @@ func formatError(value float64, n int) (string, int) {
 		digitIndexToRound += 1
 	}
 
-	digitToRound := int(str[digitIndexToRound]) - asciiZero
-	if digitToRound >= 5 {
-		formatted = str[:lastDigitIndex] + fmt.Sprint(lastDigit+1)
-	} else {
-		formatted = str[:lastDigitIndex] + fmt.Sprint(lastDigit)
-	}
-
 	dotIndex := strings.Index(str, ".")
 	if dotIndex > digitIndexToRound {
 		exp = dotIndex - digitIndexToRound
 	} else {
 		exp = 0
+	}
+
+	digitToRound := int(str[digitIndexToRound]) - asciiZero
+
+	formattedValue, _ := strconv.ParseFloat(str[:digitIndexToRound], 64)
+	if digitToRound >= 5 {
+		if dotIndex > lastDigitIndex {
+			formattedValue = formattedValue + 1
+		} else {
+			formattedValue = formattedValue + math.Pow10(dotIndex-lastDigitIndex)
+		}
+	}
+
+	formatted = strconv.FormatFloat(formattedValue, 'f', -1, 64)
+	if len(formatted) < digitIndexToRound {
+		formatted = strconv.FormatFloat(formattedValue, 'f', lastDigitIndex-dotIndex, 64)
+	} else {
+		formatted = formatted[:(lastDigitIndex + 1)]
 	}
 
 	return formatted, exp
@@ -88,6 +99,9 @@ func formatAvg(value float64, digitIndexToRound int) string {
 	str := strconv.FormatFloat(value, 'f', -1, 64)
 
 	dotIndex := strings.Index(str, ".")
+	if dotIndex == -1 {
+		dotIndex = len(str)
+	}
 	indexToRound := dotIndex + (-1)*digitIndexToRound
 	if indexToRound >= len(str) {
 		exitTooLarge()
@@ -99,11 +113,20 @@ func formatAvg(value float64, digitIndexToRound int) string {
 		lastDigitIndex -= 1
 	}
 
-	lastDigit := int(str[lastDigitIndex]) - asciiZero
+	formattedValue, _ := strconv.ParseFloat(str[:indexToRound], 64)
 	if digitToRound >= 5 {
-		formatted = str[:lastDigitIndex] + fmt.Sprint(lastDigit+1)
+		if dotIndex > lastDigitIndex {
+			formattedValue = formattedValue + 1
+		} else {
+			formattedValue = formattedValue + math.Pow10(dotIndex-lastDigitIndex)
+		}
+	}
+
+	formatted = strconv.FormatFloat(formattedValue, 'f', -1, 64)
+	if len(formatted) < indexToRound {
+		formatted = strconv.FormatFloat(formattedValue, 'f', lastDigitIndex-dotIndex, 64)
 	} else {
-		formatted = str[:lastDigitIndex] + fmt.Sprint(lastDigit)
+		formatted = formatted[:(lastDigitIndex + 1)]
 	}
 
 	return formatted
