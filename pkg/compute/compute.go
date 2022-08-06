@@ -33,10 +33,10 @@ func variance(values []float64) float64 {
 	return result
 }
 
-func std(values []float64) float64 {
+func sd(values []float64) float64 {
 	return math.Sqrt(variance(values))
 }
 
 func Error(values []float64, r float64) float64 {
-	return r * std(values)
+	return r * sd(values) / math.Sqrt(length(values))
 }

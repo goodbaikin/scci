@@ -3,7 +3,7 @@ The scmav is a short of "Simple Calculator of a Most Accurate Value". This tool 
 
 $acc$ is just an average. 
 
-$err$ is a result of $r \times std$ where $std$  is a standard deviation. $r$ is a bias. Its default value is 1.96 which implies 95% confidence interval. You can also specify the value of $r$ as an parameter. See below Example.
+$err$ is a result of $r \times se$ where $se$  is a standard error of mean. $r$ is a bias. Its default value is 1.96 which implies 95% confidence interval. You can also specify the value of $r$ as an parameter. See below Example.
 
 The result is output following the specified number of the significant digits. The default number is 1. You can specify this value with the flag .
 
@@ -29,7 +29,7 @@ scmav data.txt
 ``` 
 and get the result like this: 
 ```
-(6±2)×10
+59±6
 ```
 
 ## Error bias
@@ -39,7 +39,7 @@ scmav -r 1.64 data.txt
 ```
 And you can get the output.
 ```
-(6±2)×10
+59±5
 ```
 
 ## The number of the significant digits
@@ -49,7 +49,7 @@ scmav -n 2 data.txt
 ```
 
 ```
-59±19
+58.5±5.8
 ```
 
 If you specify the value smaller than 1, the result will not be formatted.
