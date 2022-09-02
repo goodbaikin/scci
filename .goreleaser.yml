@@ -7,7 +7,7 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./cmd/
+  - main: ./cmd/scci
     binary: "{{.ProjectName}}"
     goos:
       - linux
@@ -20,10 +20,10 @@ builds:
       - -s -w
 
 archives:
-  - name_template: '{{.ProjectName}}_{{.Os}}_{{.Arch}}'
+  - name_template: "{{.ProjectName}}_{{.Os}}_{{.Arch}}"
     format_overrides:
       - goos: windows
         format: zip
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"

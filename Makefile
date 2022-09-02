@@ -2,8 +2,8 @@ default: install
 
 .PHONY: build
 build:
-	CGO_EMABLED=0 go build -o ./cmd/scmav/ -ldflags '-s -w' ./cmd/scmav
+	CGO_EMABLED=0 go build -o ./cmd/scci/ -ldflags '-s -w' ./cmd/scci
 
 .PHONY: install
-install:
-	go install ./cmd/scmav
+install: build
+	go install ./cmd/scci
