@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"scmav/pkg/compute"
-	"scmav/pkg/readfs"
+
+	"github.com/goodbaikin/scci/pkg/compute"
+	"github.com/goodbaikin/scci/pkg/readfs"
 )
 
 func main() {

@@ -1,7 +1,7 @@
-# What is scmav
-The scmav is a short of "Simple Calculator of a Most Accurate Value". This tool provides simple statistical analisys, in format "$acc\pm err$".
+# What is scci
+The scci is a short of "Simple Calculator of a Confidence Interval". This tool provides simple statistical analisys, in format "$avg \pm err$".
 
-$acc$ is just an average. 
+$avg$ is just an average. 
 
 $err$ is a result of $r \times se$ where $se$  is a standard error of mean. $r$ is a bias. Its default value is 1.96 which implies 95% confidence interval. You can also specify the value of $r$ as an parameter. See below Example.
 
