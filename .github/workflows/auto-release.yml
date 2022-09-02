@@ -1,0 +1,62 @@
+name: "Auto Release"
+
+on:
+  # And it also supports manual triggering:
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "major|minor|patch|release|prerel"
+        default: "patch"
+        required: true
+      release_version:
+        description: "Optional release version, e.g. 0.2.0"
+        required: false
+
+jobs:
+  bump_version-tag-release:
+    # ⚠️ If this changes, remember to update the running-workflow-name property
+    name: "Bump version, tag & release"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Create next release tag"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEMVER_BUMP: ${{ github.event.inputs.release_type }}
+        run: |
+          if [[ -n "${{ github.event.inputs.release_version }}" ]]
+          then
+            next_release_version="v${{ github.event.inputs.release_version }}"
+          else
+            previous_release_version="$(gh api /repos/:owner/:repo/releases --jq '.[0].tag_name')"
+            echo "PREVIOUS RELEASE VERSION: $previous_release_version"
+            # Rather than installing it on every run, we commit it locally so that we have everything we need locally
+            # wget https://raw.githubusercontent.com/fsaintjacques/semver-tool/3.3.0/src/semver
+            # https://github.com/fsaintjacques/semver-tool
+            next_release_version="v$(./semver bump ${SEMVER_BUMP:=patch}  $previous_release_version)"
+          fi
+          echo "NEXT RELEASE VERSION: $next_release_version"
+          gh api -X POST /repos/:owner/:repo/git/refs \
+            --field ref="refs/tags/$next_release_version" \
+            --field sha="$GITHUB_SHA"
+      - name: "Fetch new tag"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Go"
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: "Release"
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: release --rm-dist --debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
