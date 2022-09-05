@@ -9,9 +9,9 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/main.go",
+            "program": "${workspaceFolder}/cmd/scci/main.go",
             "args": [
-                "${workspaceFolder}/test/data.txt"
+                "${workspaceFolder}/example/data.txt"
             ]
         }
     ]

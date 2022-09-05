@@ -103,8 +103,11 @@ func formatAvg(value float64, digitIndexToRound int) string {
 		dotIndex = len(str)
 	}
 	indexToRound := dotIndex + (-1)*digitIndexToRound
-	if indexToRound >= len(str) {
+	if indexToRound > len(str) {
 		exitTooLarge()
+	}
+	if indexToRound == len(str) {
+		return str
 	}
 	digitToRound := int(str[indexToRound]) - asciiZero
 
